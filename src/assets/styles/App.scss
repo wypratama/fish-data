@@ -1,0 +1,11 @@
+@use 'primereact/resources/primereact.min.css';
+@use 'primeicons/primeicons.css';
+@use 'primereact/resources/themes/bootstrap4-light-blue/theme.css';
+@use './reset';
+@use './form.scss';
+
+.App {
+  text-align: center;
+  background-color: #eff3f8;
+  padding: 100px;
+}
