@@ -1,13 +1,14 @@
 import { useState } from 'react';
-import useStore from '../store';
+import useStore, { Commodity } from '../store';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { FilterMatchMode } from 'primereact/api';
-import { filterDropDown, tableHeader } from '../elements';
+import { filterDropDown, tableHeader, actionColumn } from '../elements';
 
 export default function Table(props: {
   formState: boolean;
   setFormState: any;
+  setEditData: any;
 }) {
   const [globalFilter, setGlobalFilter] = useState(null),
     data = useStore((state) => state.data),
@@ -43,22 +44,31 @@ export default function Table(props: {
       : [],
     filterProvince = filterDropDown(mappedProvice),
     filterCity = filterDropDown(mappedCity),
-    header = tableHeader(setGlobalFilter, props.formState, props.setFormState);
+    header = tableHeader(setGlobalFilter, props.formState, props.setFormState),
+    editProduct = (rowData: Commodity) => {
+      // console.log(rowData);
+      props.setFormState(true);
+      props.setEditData(rowData);
+    },
+    confirmDeleteProduct = (rowData: Commodity) => {
+      console.log(rowData);
+    },
+    optionColumn = actionColumn(editProduct, confirmDeleteProduct);
 
   return (
     <DataTable
       value={data?.filter((val) => val.komoditas !== null)}
       header={header}
-      responsiveLayout="stack"
-      breakpoint="1180px"
+      responsiveLayout="scroll"
       stripedRows
       paginator
       rows={10}
       sortMode="multiple"
       showGridlines
       filters={filters}
-      filterDisplay="row"
+      filterDisplay="menu"
       globalFilter={globalFilter}
+      emptyMessage="Tidak ada data untuk ditampilkan"
     >
       <Column field="komoditas" header="Komoditas" sortable filter></Column>
       <Column
@@ -75,12 +85,17 @@ export default function Table(props: {
         filter
         filterElement={filterCity}
       ></Column>
-      <Column field="size" header="size" sortable filter></Column>
+      <Column field="size" header="Ukuran" sortable filter></Column>
       <Column field="price" header="Harga" sortable filter></Column>
       <Column
-        field="uuid"
-        header="uuid"
+        field="timestamp"
+        header="Tanggal"
         bodyStyle={{ fontSize: '12px' }}
+      ></Column>
+      <Column
+        body={optionColumn}
+        exportable={false}
+        style={{ minWidth: '8rem' }}
       ></Column>
     </DataTable>
   );

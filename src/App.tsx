@@ -9,7 +9,8 @@ function App() {
     dispatchData = useStore((state) => state.dispatchData),
     dispatchArea = useStore((state) => state.dispatchArea),
     dispatchProvince = useStore((state) => state.dispatchProvince),
-    dispatchSize = useStore((state) => state.dispatchSize);
+    dispatchSize = useStore((state) => state.dispatchSize),
+    [editData, setEditData] = useState(null);
 
   useEffect(() => {
     dispatchData();
@@ -21,9 +22,18 @@ function App() {
   return (
     <div className="App">
       <main>
-        <FormGroup formState={formState} setFormState={setFormState} />
+        <FormGroup
+          formState={formState}
+          setFormState={setFormState}
+          editData={editData}
+          setEditData={setEditData}
+        />
         <Card>
-          <Table formState={formState} setFormState={setFormState} />
+          <Table
+            formState={formState}
+            setFormState={setFormState}
+            setEditData={setEditData}
+          />
         </Card>
       </main>
     </div>

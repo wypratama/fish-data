@@ -3,13 +3,15 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
 import { AutoComplete } from 'primereact/autocomplete';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useStore, { Province } from '../store';
 import { uuidv4, store } from '../helpers/';
 
 export default function FormGroup(props: {
   formState: boolean | undefined;
   setFormState: (arg0: boolean) => void;
+  editData: any;
+  setEditData: (arg0: any) => void;
 }) {
   const provinceList = useStore((state) => state.province),
     sizeOption = useStore((state) => state.options.size),
@@ -40,9 +42,9 @@ export default function FormGroup(props: {
       setSize('');
       setPrice(0);
       props.setFormState(false);
+      props.setEditData(null);
     },
     submitFunction = async () => {
-      const data = { commodity, province, city, size, price };
       const date = new Date(),
         stamp = Date.now(),
         uuid = uuidv4();
@@ -58,6 +60,30 @@ export default function FormGroup(props: {
           uuid: uuid,
         },
       ]);
+      dispatchData();
+      closeFunction();
+    },
+    editFunction = async () => {
+      const searchKey: any = {};
+      for (const key in props.editData) {
+        if (props.editData[key]) {
+          searchKey[key] = props.editData[key];
+        }
+      }
+      const res = await store.edit('list', {
+        search: searchKey,
+        set: {
+          komoditas: commodity,
+          area_provinsi: province.nama
+            ? province.nama.toUpperCase()
+            : province.toUpperCase(),
+          area_kota: city.nama ? city.nama.toUpperCase() : city.toUpperCase(),
+          size: size.size || size,
+          price: price?.toString(),
+        },
+        limit: 1,
+      });
+      console.log(res);
       dispatchData();
       closeFunction();
     },
@@ -106,10 +132,34 @@ export default function FormGroup(props: {
 
         setFilteredSize(_filteredProvince);
       }, 250);
+    },
+    onFromShow = () => {
+      if (props.editData) {
+        setCommodity(props.editData.komoditas);
+        setProvince(props.editData.area_provinsi);
+        setCity(props.editData.area_kota);
+        setSize(props.editData.size);
+        setPrice(props.editData.price);
+      }
     };
 
   const renderFooter = () => {
-    return (
+    return props.editData ? (
+      <div>
+        <Button
+          label="Batalkan"
+          icon="pi pi-times"
+          onClick={closeFunction}
+          className="p-button-text"
+        />
+        <Button
+          label="Perbarui"
+          icon="pi pi-check"
+          onClick={editFunction}
+          autoFocus
+        />
+      </div>
+    ) : (
       <div>
         <Button
           label="Batalkan"
@@ -129,12 +179,19 @@ export default function FormGroup(props: {
 
   return (
     <Dialog
-      header="Tambah Data"
+      header={
+        props.editData
+          ? `Ubah Data ${props.editData.komoditas} di ${props.editData.area_kota}`
+          : 'Tambah Data'
+      }
       visible={props.formState}
       className="crud-dialog"
       contentClassName="crud-form"
       onHide={closeFunction}
       footer={renderFooter}
+      dismissableMask
+      closeOnEscape
+      onShow={onFromShow}
     >
       <form action="" className="form-main">
         <div>
