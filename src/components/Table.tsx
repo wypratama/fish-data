@@ -4,15 +4,18 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { FilterMatchMode } from 'primereact/api';
 import { filterDropDown, tableHeader, actionColumn } from '../elements';
+import { store } from '../helpers/';
 
 export default function Table(props: {
   formState: boolean;
   setFormState: any;
   setEditData: any;
+  toast: any;
 }) {
   const [globalFilter, setGlobalFilter] = useState(null),
     data = useStore((state) => state.data),
     area = useStore((state) => state.options.area),
+    dispatchData = useStore((state) => state.dispatchData),
     filters = {
       komoditas: { value: '', matchMode: FilterMatchMode.STARTS_WITH },
       area_provinsi: { value: '', matchMode: FilterMatchMode.STARTS_WITH },
@@ -46,12 +49,27 @@ export default function Table(props: {
     filterCity = filterDropDown(mappedCity),
     header = tableHeader(setGlobalFilter, props.formState, props.setFormState),
     editProduct = (rowData: Commodity) => {
-      // console.log(rowData);
       props.setFormState(true);
       props.setEditData(rowData);
     },
-    confirmDeleteProduct = (rowData: Commodity) => {
-      console.log(rowData);
+    confirmDeleteProduct = async (rowData: Commodity) => {
+      const searchKey: any = {};
+      let key: keyof Commodity;
+      for (key in rowData) {
+        if (rowData[key]) {
+          searchKey[key] = rowData[key];
+        }
+      }
+      const res = await store.delete('list', {
+        search: searchKey,
+        limit: 1,
+      });
+      dispatchData();
+      props.toast.current.show({
+        severity: 'success',
+        summary: 'Berhasil Menghapus!',
+        detail: `${res.clearedRowsCount} data terhapus`,
+      });
     },
     optionColumn = actionColumn(editProduct, confirmDeleteProduct);
 

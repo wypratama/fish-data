@@ -3,7 +3,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
 import { AutoComplete } from 'primereact/autocomplete';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useStore, { Province } from '../store';
 import { uuidv4, store } from '../helpers/';
 
@@ -12,6 +12,7 @@ export default function FormGroup(props: {
   setFormState: (arg0: boolean) => void;
   editData: any;
   setEditData: (arg0: any) => void;
+  toast: any;
 }) {
   const provinceList = useStore((state) => state.province),
     sizeOption = useStore((state) => state.options.size),
@@ -60,6 +61,12 @@ export default function FormGroup(props: {
           uuid: uuid,
         },
       ]);
+      console.log(res);
+      props.toast.current.show({
+        severity: 'success',
+        summary: 'Berhasil Memambah!',
+        detail: `Berhasil menambah data ${commodity}`,
+      });
       dispatchData();
       closeFunction();
     },
@@ -84,6 +91,11 @@ export default function FormGroup(props: {
         limit: 1,
       });
       console.log(res);
+      props.toast.current.show({
+        severity: 'success',
+        summary: 'Berhasil Mengubah!',
+        detail: `Berhasil mengubah data ${searchKey.komoditas}`,
+      });
       dispatchData();
       closeFunction();
     },
