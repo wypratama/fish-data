@@ -1,13 +1,13 @@
 import { Button } from 'primereact/button';
-import { Commodity } from '../store';
 import { confirmPopup } from 'primereact/confirmpopup';
+import { Commodity } from '../types/types';
 
 export default (
   editProduct: (val: Commodity) => void,
   confirmDeleteProduct: (val: Commodity) => void
 ) => {
   return (rowData: Commodity) => {
-    const confirm = (event) => {
+    const confirm = (event: { currentTarget: any }) => {
       confirmPopup({
         target: event.currentTarget,
         message: 'Yakin mau dihapus?',

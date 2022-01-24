@@ -118,7 +118,7 @@ export default function Table(props: {
       rows={10}
       sortMode="multiple"
       showGridlines
-      filters={filters}
+      filters={filters as any}
       filterDisplay="menu"
       globalFilter={globalFilter}
       emptyMessage="Tidak ada data untuk ditampilkan"
