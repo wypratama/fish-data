@@ -78,7 +78,7 @@ export default function Table(props: {
     filterProvince = filterDropDown(mappedProvice, 'Provinsi'),
     filterCity = filterDropDown(mappedCity, 'Kota'),
     filterSize = filterDropDown(mappedSize, 'Ukuran'),
-    header = tableHeader(setGlobalFilter, props.formState, props.setFormState),
+    header = tableHeader(setGlobalFilter, globalFilter, props.setFormState),
     priceTemplate = (rowData: Commodity) => {
       return toCurrency(rowData.price as string);
     },

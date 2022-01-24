@@ -1,5 +1,8 @@
 .crud-dialog {
   width: 40vw;
+  @media screen and (max-width: 540px) {
+    width: 98%;
+  }
 
   .crud-form {
     padding: 2rem;
@@ -14,7 +17,7 @@
     .sub-form {
       display: flex;
       flex-direction: row;
-      gap: 1rem;
+      justify-content: space-between;
 
       .p-float-label {
         width: 100%;
