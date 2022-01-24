@@ -7,7 +7,10 @@ const onStatusChange = (
   options.filterCallback(e.value);
 };
 
-export default (items: Array<{ label: string; value: string }>) => {
+export default (
+  items: Array<{ label: string; value: string }>,
+  type: string
+) => {
   return (options: { value: string; filterCallback: (arg0: any) => void }) => (
     <Dropdown
       style={{ width: '100%' }}
@@ -15,6 +18,7 @@ export default (items: Array<{ label: string; value: string }>) => {
       value={options.value}
       options={items}
       onChange={(e) => onStatusChange(e, options)}
+      placeholder={'Pilih ' + type}
     />
   );
 };

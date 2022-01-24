@@ -8,7 +8,7 @@ export interface Commodity {
   area_kota: string | null;
   size: string | null;
   price: string | null;
-  tgl_parsed: string | null;
+  tgl_parsed: Date | string | null;
   timestamp: string | null;
 }
 
@@ -45,8 +45,14 @@ export default create<FishStore>((set) => ({
   province: null,
   city: null,
   dispatchData: async (option) => {
-    const response: Array<Commodity> = await store.read('list', option);
-    set({ data: response });
+    const response: Array<Commodity> = await store.read('list', option),
+      mapped = await Promise.all(
+        response.map((a) => ({
+          ...a,
+          tgl_parsed: a.tgl_parsed ? new Date(a.tgl_parsed) : null,
+        }))
+      );
+    set({ data: mapped });
   },
   dispatchArea: async (option) => {
     const response: Array<Area> = await store.read('option_area', option);
