@@ -4,8 +4,9 @@ import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
 import { AutoComplete } from 'primereact/autocomplete';
 import { useState } from 'react';
-import useStore, { Province } from '../store';
-import { uuidv4, store } from '../helpers/';
+import useStore from '../store';
+import { uuidv4, store, mapArea, submitCallback } from '../helpers/';
+import { Area, ListOption, Size } from '../types/types';
 
 export default function FormGroup(props: {
   formState: boolean | undefined;
@@ -14,135 +15,111 @@ export default function FormGroup(props: {
   setEditData: (arg0: any) => void;
   toast: any;
 }) {
-  const provinceList = useStore((state) => state.province),
+  const area = useStore((state) => state.options.area),
+    mappedProvice = mapArea(area as Area[], 'province'),
     sizeOption = useStore((state) => state.options.size),
     dispatchData = useStore((state) => state.dispatchData),
-    [filteredProvince, setFilteredProvince] = useState<Province[] | []>([]),
-    [filteredCity, setFilteredCity] = useState<Array<{
-      id: number;
-      id_provinsi: string;
-      nama: string;
-    }> | null>(null),
-    [filteredSize, setFilteredSize] = useState(null),
+    [filteredProvince, setFilteredProvince] = useState<Array<ListOption> | []>(
+      []
+    ),
+    [filteredCity, setFilteredCity] = useState<Array<ListOption> | []>([]),
+    [filteredSize, setFilteredSize] = useState<Array<Size> | []>([]),
     [commodity, setCommodity] = useState(''),
-    [province, setProvince] = useState<Province | string>(''),
-    [city, setCity] = useState<
-      | Array<{
-          id: number;
-          id_provinsi: string;
-          nama: string;
-        }>
-      | string
-    >(''),
-    [size, setSize] = useState<{ size: string } | string>(''),
+    [province, setProvince] = useState<ListOption | string>(''),
+    [city, setCity] = useState<ListOption | string>(''),
+    [size, setSize] = useState<Size | string>(''),
     [price, setPrice] = useState<number | null>(0),
+    [validator, setValidator] = useState({
+      komoditas: false,
+      area_provinsi: false,
+      area_kota: false,
+      size: false,
+      price: false,
+    }),
     closeFunction = () => {
       setCommodity('');
       setProvince('');
       setCity('');
       setSize('');
       setPrice(0);
+      setValidator({
+        komoditas: false,
+        area_provinsi: false,
+        area_kota: false,
+        size: false,
+        price: false,
+      });
       props.setFormState(false);
       props.setEditData(null);
     },
-    submitFunction = async () => {
-      const date = new Date(),
-        stamp = Date.now(),
-        uuid = uuidv4();
-      const res = await store.append('list', [
-        {
-          komoditas: commodity,
-          area_provinsi: province.nama.toUpperCase(),
-          area_kota: city.nama.toUpperCase(),
-          size: size.size,
-          price: price?.toString(),
-          tgl_parsed: date,
-          timestamp: stamp.toString(),
-          uuid: uuid,
-        },
-      ]);
-      console.log(res);
-      props.toast.current.show({
-        severity: 'success',
-        summary: 'Berhasil Memambah!',
-        detail: `Berhasil menambah data ${commodity}`,
-      });
-      dispatchData();
-      closeFunction();
+    argsSumbitCallback = {
+      commodity,
+      province,
+      city,
+      size,
+      price,
+      toast: props.toast,
+      dispatchData,
+      closeFunction,
+      setValidator,
     },
-    editFunction = async () => {
-      const searchKey: any = {};
-      for (const key in props.editData) {
-        if (props.editData[key]) {
-          searchKey[key] = props.editData[key];
-        }
-      }
-      const res = await store.edit('list', {
-        search: searchKey,
-        set: {
-          komoditas: commodity,
-          area_provinsi: province.nama
-            ? province.nama.toUpperCase()
-            : province.toUpperCase(),
-          area_kota: city.nama ? city.nama.toUpperCase() : city.toUpperCase(),
-          size: size.size || size,
-          price: price?.toString(),
-        },
-        limit: 1,
-      });
-      console.log(res);
-      props.toast.current.show({
-        severity: 'success',
-        summary: 'Berhasil Mengubah!',
-        detail: `Berhasil mengubah data ${searchKey.komoditas}`,
-      });
-      dispatchData();
-      closeFunction();
-    },
+    submitFunction = submitCallback({
+      ...argsSumbitCallback,
+      type: 'append',
+    }),
+    editFunction = submitCallback({
+      ...argsSumbitCallback,
+      type: 'edit',
+      oldData: props.editData,
+    }),
     searchProvince = (event: { query: string }) => {
       setTimeout(() => {
         let _filteredProvince;
         if (!event.query.trim().length) {
-          _filteredProvince = [...provinceList];
+          _filteredProvince = [...mappedProvice];
         } else {
-          _filteredProvince = provinceList?.filter((prov) => {
-            return prov.nama
-              .toLowerCase()
-              .startsWith(event.query.toLowerCase());
-          });
+          _filteredProvince = mappedProvice?.filter(
+            (prov: { value: string; label: string }) => {
+              return prov.value
+                .toLowerCase()
+                .startsWith(event.query.toLowerCase());
+            }
+          );
         }
 
         setFilteredProvince(_filteredProvince);
       }, 250);
     },
-    searchCity = async (event: { query: string }) => {
-      const res = await fetch(
-        `https://dev.farizdotid.com/api/daerahindonesia/kota?id_provinsi=${province.id}`
-      );
-      const { kota_kabupaten } = await res.json();
-      let _filteredCity;
-      if (!event.query.trim().length) {
-        _filteredCity = [...kota_kabupaten];
-      } else {
-        _filteredCity = kota_kabupaten.filter((ct) => {
-          return ct.nama.toLowerCase().startsWith(event.query.toLowerCase());
-        });
-      }
-
-      setFilteredCity(_filteredCity);
-    },
-    searchSize = (event: { query: string }) => {
+    searchCity = (event: { query: string }) => {
       setTimeout(() => {
-        let _filteredProvince;
+        let selectedProvince = province as ListOption;
+        const list = area?.filter(
+          ({ province: prov }) => prov === selectedProvince.value
+        );
+        const mappedCity = mapArea(list as Area[], 'city');
+        let _filteredCity;
         if (!event.query.trim().length) {
-          _filteredProvince = [...sizeOption];
+          _filteredCity = [...mappedCity];
         } else {
-          _filteredProvince = sizeOption?.filter((s) => {
-            return s.size.toLowerCase().startsWith(event.query.toLowerCase());
+          _filteredCity = mappedCity.filter((ct) => {
+            return ct.value.toLowerCase().startsWith(event.query.toLowerCase());
           });
         }
 
-        setFilteredSize(_filteredProvince);
+        setFilteredCity(_filteredCity);
+      }, 250);
+    },
+    searchSize = (event: { query: string }) => {
+      setTimeout(() => {
+        let _filteredSize;
+        if (!event.query.trim().length) {
+          _filteredSize = [...(sizeOption as Size[])];
+        } else {
+          _filteredSize = sizeOption?.filter((s) => {
+            return s.size.toLowerCase().startsWith(event.query.toLowerCase());
+          });
+        }
+        if (_filteredSize) setFilteredSize(_filteredSize);
       }, 250);
     },
     onFromShow = () => {
@@ -212,67 +189,134 @@ export default function FormGroup(props: {
               id="com"
               value={commodity}
               onChange={(e) => setCommodity(e.target.value)}
+              className={validator.komoditas && !commodity ? 'p-invalid' : ''}
             />
             <label htmlFor="com">Komoditas</label>
           </span>
-          <small style={{ display: 'none' }} className="p-error block">
-            Error
+          <small
+            style={{
+              display: validator.komoditas && !commodity ? 'block' : 'none',
+              marginLeft: '.2rem',
+              marginTop: '.1rem',
+              fontSize: '12px',
+            }}
+            className="p-error block"
+          >
+            Komoditas tidak boleh kosong
           </small>
         </div>
-        <span className="p-float-label">
-          <AutoComplete
-            dropdown
-            value={province}
-            field="nama"
-            suggestions={filteredProvince}
-            completeMethod={searchProvince}
-            onChange={(e) => setProvince(e.value)}
-            forceSelection
-            style={{ width: '100%' }}
-          />
-          <label htmlFor="province">Area Provinsi</label>
-        </span>
-        <span className="p-float-label">
-          <AutoComplete
-            dropdown
-            value={city}
-            field="nama"
-            suggestions={filteredCity}
-            completeMethod={searchCity}
-            onChange={(e) => setCity(e.value)}
-            forceSelection
-            style={{ width: '100%' }}
-            disabled={province ? false : true}
-          />
-          <label htmlFor="city">
-            Area Kota{!province && ' (pilih provinsi dulu)'}
-          </label>
-        </span>
-        <div className="sub-form">
+        <div>
           <span className="p-float-label">
             <AutoComplete
               dropdown
-              value={size}
-              field="size"
-              suggestions={filteredSize}
-              completeMethod={searchSize}
-              onChange={(e) => setSize(e.value)}
+              value={province}
+              field="value"
+              suggestions={filteredProvince}
+              completeMethod={searchProvince}
+              onChange={(e) => setProvince(e.value)}
               forceSelection
               style={{ width: '100%' }}
+              className={
+                validator.area_provinsi && !province ? 'p-invalid' : ''
+              }
             />
-            <label htmlFor="size">Ukuran</label>
+            <label htmlFor="province">Area Provinsi</label>
           </span>
+          <small
+            style={{
+              display: validator.area_provinsi && !province ? 'block' : 'none',
+              marginLeft: '.2rem',
+              marginTop: '.1rem',
+              fontSize: '12px',
+            }}
+            className="p-error block"
+          >
+            Provinsi tidak boleh kosong
+          </small>
+        </div>
+        <div>
           <span className="p-float-label">
-            <InputNumber
-              value={price}
-              onValueChange={(e) => setPrice(e.value)}
-              mode="currency"
-              currency="IDR"
-              locale="id-ID"
+            <AutoComplete
+              dropdown
+              value={city}
+              field="value"
+              suggestions={filteredCity}
+              completeMethod={searchCity}
+              onChange={(e) => setCity(e.value)}
+              forceSelection
               style={{ width: '100%' }}
+              disabled={province ? false : true}
+              className={validator.area_kota && !city ? 'p-invalid' : ''}
             />
-            <label htmlFor="price">Harga</label>
+            <label htmlFor="city">
+              Area Kota{!province && ' (pilih provinsi dulu)'}
+            </label>
           </span>
+          <small
+            style={{
+              display: validator.area_kota && !city ? 'block' : 'none',
+              marginLeft: '.2rem',
+              marginTop: '.1rem',
+              fontSize: '12px',
+            }}
+            className="p-error block"
+          >
+            Kota tidak boleh kosong
+          </small>
+        </div>
+        <div className="sub-form">
+          <div>
+            <span className="p-float-label">
+              <AutoComplete
+                dropdown
+                value={size}
+                field="size"
+                suggestions={filteredSize}
+                completeMethod={searchSize}
+                onChange={(e) => setSize(e.value)}
+                forceSelection
+                style={{ width: '100%' }}
+                className={validator.size && !size ? 'p-invalid' : ''}
+              />
+              <label htmlFor="size">Ukuran</label>
+            </span>
+            <small
+              style={{
+                display: validator.size && !size ? 'block' : 'none',
+                marginLeft: '.2rem',
+                marginTop: '.1rem',
+                fontSize: '12px',
+              }}
+              className="p-error block"
+            >
+              Ukuran tidak boleh kosong
+            </small>
+          </div>
+          <div>
+            <span className="p-float-label">
+              <InputNumber
+                value={price}
+                onValueChange={(e) => setPrice(e.value)}
+                mode="currency"
+                currency="IDR"
+                locale="id-ID"
+                style={{ width: '100%' }}
+                className={validator.price && !price ? 'p-invalid' : ''}
+              />
+              <label htmlFor="price">Harga</label>
+            </span>
+            <small
+              style={{
+                display: validator.price && !price ? 'block' : 'none',
+                marginLeft: '.2rem',
+                marginTop: '.1rem',
+                fontSize: '12px',
+              }}
+              className="p-error block"
+            >
+              Ukuran tidak boleh kosong
+            </small>
+          </div>
         </div>
       </form>
     </Dialog>

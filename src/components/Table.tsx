@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import useStore, { Commodity } from '../store';
+import useStore from '../store';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
@@ -11,6 +11,7 @@ import {
   filterNumber,
 } from '../elements';
 import { store, toCurrency, convertDate } from '../helpers/';
+import { Commodity } from '../types/types';
 
 export default function Table(props: {
   formState: boolean;

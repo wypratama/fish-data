@@ -1,40 +1,6 @@
 import create from 'zustand';
 import { store } from '../helpers/';
-
-export interface Commodity {
-  uuid: string | null;
-  komoditas: string | null;
-  area_provinsi: string | null;
-  area_kota: string | null;
-  size: string | null;
-  price: string | null;
-  tgl_parsed: Date | string | null;
-  timestamp: string | null;
-}
-
-export interface Area {
-  province: string;
-  city: string;
-}
-
-export interface Province {
-  id: number;
-  nama: string;
-}
-
-export interface FishStore {
-  data: Array<Commodity> | null;
-  options: {
-    size: Array<{ size: string }> | null;
-    area: Array<Area> | null;
-  };
-  province: Array<Province> | null;
-  city: null;
-  dispatchData: (option?: Options) => void;
-  dispatchArea: (option?: Options) => void;
-  dispatchProvince: (option?: Options) => void;
-  dispatchSize: (option?: Options) => void;
-}
+import { FishStore, Commodity, Area } from '../types/types';
 
 export default create<FishStore>((set) => ({
   data: null,

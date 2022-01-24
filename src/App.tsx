@@ -7,7 +7,7 @@ import { Toast } from 'primereact/toast';
 
 function App() {
   const [formState, setFormState] = useState(false),
-    toast = useRef(null),
+    toast = useRef<Toast>(null),
     dispatchData = useStore((state) => state.dispatchData),
     dispatchArea = useStore((state) => state.dispatchArea),
     dispatchProvince = useStore((state) => state.dispatchProvince),
