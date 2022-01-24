@@ -60,7 +60,7 @@ export default ({
           }
           const res = await store.edit('list', {
             search: searchKey,
-            set: inputData,
+            set: {...inputData, tgl_parsed: oldData?.tgl_parsed, timestamp: oldData?.timestamp, uuid: oldData?.uuid},
             limit: 1,
           });
           console.log(res);
