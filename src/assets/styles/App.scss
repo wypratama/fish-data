@@ -1,6 +1,6 @@
-@use 'primereact/resources/primereact.min.css';
-@use 'primeicons/primeicons.css';
-@use 'primereact/resources/themes/bootstrap4-light-blue/theme.css';
+// @use 'primereact/resources/primereact.min.css';
+// @use 'primeicons/primeicons.css';
+// @use 'primereact/resources/themes/bootstrap4-light-blue/theme.css';
 @use './reset';
 @use './form.scss';
 
@@ -8,4 +8,5 @@
   text-align: center;
   background-color: #eff3f8;
   padding: 200px 30px 200px 30px;
+  min-height: 100vh;
 }

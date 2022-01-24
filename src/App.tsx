@@ -1,4 +1,7 @@
 import './assets/styles/App.scss';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
+import './assets/styles/custom.scss';
 import { Card } from 'primereact/card';
 import { Table, FormGroup } from './components';
 import { useEffect, useRef, useState } from 'react';
