@@ -10,4 +10,12 @@
   @media screen and (max-width: 540px) {
     padding: 10px 0 100px 0;
   }
+
+  main {
+    display: flex;
+    justify-content: center;
+    .main-content {
+      max-width: max-content;
+    }
+  }
 }

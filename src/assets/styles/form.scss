@@ -1,5 +1,6 @@
 .crud-dialog {
   width: 40vw;
+  max-width: max-content;
   @media screen and (max-width: 540px) {
     width: 98%;
   }

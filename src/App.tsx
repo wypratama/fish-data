@@ -38,7 +38,7 @@ function App() {
           setEditData={setEditData}
           toast={toast}
         />
-        <Card>
+        <Card className="main-content">
           <Table
             formState={formState}
             setFormState={setFormState}

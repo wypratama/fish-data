@@ -314,7 +314,7 @@ export default function FormGroup(props: {
               }}
               className="p-error block"
             >
-              Ukuran tidak boleh kosong
+              Harga tidak boleh kosong
             </small>
           </div>
         </div>

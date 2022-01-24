@@ -3,6 +3,7 @@
 ---
 
 Simple CRUD table showing fish prices from areas in Indonesia.
+https://fish-price-data.web.app/
 
 ### LOCAL SETUP GUIDE
 
