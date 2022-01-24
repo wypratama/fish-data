@@ -20,12 +20,12 @@ export default (
       <div className="action-column">
         <Button
           icon="pi pi-pencil"
-          className="p-button-sm p-button-success mr-2"
+          className="p-button-sm mr-2"
           onClick={() => editProduct(rowData)}
         />
         <Button
           icon="pi pi-trash"
-          className="p-button-sm p-button-warning"
+          className="p-button-sm p-button-danger"
           onClick={confirm}
         />
       </div>
