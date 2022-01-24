@@ -38,6 +38,7 @@ export interface FishStore {
   };
   province: Array<Province> | null;
   city: null;
+  tableLoading: boolean;
   dispatchData: (option?: Options) => void;
   dispatchArea: (option?: Options) => void;
   dispatchProvince: (option?: Options) => void;

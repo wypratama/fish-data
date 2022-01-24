@@ -24,6 +24,7 @@ export default function Table(props: {
     data = useStore((state) => state.data),
     area = useStore((state) => state.options.area),
     sizeList = useStore((state) => state.options.size),
+    tableLoading = useStore((state) => state.tableLoading),
     //action from store
     dispatchData = useStore((state) => state.dispatchData),
     //filter settings
@@ -123,6 +124,7 @@ export default function Table(props: {
       globalFilter={globalFilter}
       emptyMessage="Tidak ada data untuk ditampilkan"
       rowHover
+      loading={tableLoading}
     >
       <Column
         field="komoditas"

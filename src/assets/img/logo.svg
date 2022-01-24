@@ -2,8 +2,29 @@
 
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 1554.986 1652.737" enable-background="new 0 0 1554.986 1652.737" xml:space="preserve" fill="#038767">
-<g>
+	 viewBox="0 0 1554.986 1652.737" enable-background="new 0 0 1554.986 1652.737" xml:space="preserve" fill="#579586cc">
+<defs>
+    <filter id="inset-shadow" width="200%" height="200%">
+      <!-- Shadow Offset -->
+      <feOffset dx="0" dy="1" />
+      <!-- Shadow Blur -->
+      <feGaussianBlur stdDeviation="1"  result="offset-blur" />
+      <!-- Invert the drop shadow to create an inner shadow -->
+      <feComposite operator="out" in="SourceGraphic" result="inverse" />
+      <!-- Color & Opacity -->
+      <feFlood flood-color="black" flood-opacity=".75" result="color" />
+      <!-- Clip color inside shadow -->
+      <feComposite operator="in" in="color" in2="inverse" result="shadow" />
+      <!-- Shadow Opacity -->
+      <feComponentTransfer in="shadow" result="shadow">
+        <feFuncA type="linear" slope="1" />
+      </feComponentTransfer>
+      <!-- Put shadow over original object -->
+      <feComposite operator="over" in="shadow" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+
+<g filter="url(#inset-shadow)">
 	<path d="M822.849,291.584c-12.344-2.401-40.713,16.301-49.16,26.549c-41.159,49.937-11.196,119.372,33.567,151.335
 		c16.092,11.49,32.436,9.11,31.28,18.446c-1.2,9.682-9.464,7.007-33.731,11.809c-68.078,13.472-77.588,48.395-110.073,41.127
 		c-82.969-18.563-153.326-1.433-284.258,51.464c-15.326,6.191-105.178,57.908-170.38,102.032

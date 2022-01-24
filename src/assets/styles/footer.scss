@@ -1,0 +1,21 @@
+.footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 10vh;
+
+  img {
+    width: 34px;
+  }
+
+  h4 {
+    background-color: #565656;
+    color: transparent;
+    text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+  }
+}

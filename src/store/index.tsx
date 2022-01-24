@@ -10,7 +10,9 @@ export default create<FishStore>((set) => ({
   },
   province: null,
   city: null,
+  tableLoading: false,
   dispatchData: async (option) => {
+    set({ tableLoading: true });
     const response: Array<Commodity> = await store.read('list', option),
       mapped = await Promise.all(
         response.map((a) => ({
@@ -19,6 +21,7 @@ export default create<FishStore>((set) => ({
         }))
       );
     set({ data: mapped });
+    set({ tableLoading: false });
   },
   dispatchArea: async (option) => {
     const response: Array<Area> = await store.read('option_area', option);

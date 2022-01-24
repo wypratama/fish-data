@@ -1,0 +1,24 @@
+.navbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  gap: 1rem;
+  @media screen and (max-width: 540px) {
+    flex-direction: column;
+  }
+
+  img {
+    width: 70px;
+  }
+
+  h1 {
+    background-color: #565656;
+    color: transparent;
+    text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+  }
+}

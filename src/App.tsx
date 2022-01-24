@@ -3,7 +3,7 @@ import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import './assets/styles/custom.scss';
 import { Card } from 'primereact/card';
-import { Table, FormGroup } from './components';
+import { Table, FormGroup, Navbar, Footer } from './components';
 import { useEffect, useRef, useState } from 'react';
 import useStore from './store';
 import { Toast } from 'primereact/toast';
@@ -27,6 +27,9 @@ function App() {
   return (
     <div className="App">
       <Toast ref={toast} position="bottom-right" />
+      <header>
+        <Navbar />
+      </header>
       <main>
         <FormGroup
           formState={formState}
@@ -44,6 +47,9 @@ function App() {
           />
         </Card>
       </main>
+      <footer>
+        <Footer />
+      </footer>
     </div>
   );
 }

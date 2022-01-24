@@ -3,6 +3,9 @@
   @media screen and (max-width: 540px) {
     width: 98%;
   }
+  @media screen and (max-width: 912px) and (min-width: 541px) {
+    width: 65vw;
+  }
 
   .crud-form {
     padding: 2rem;
@@ -18,6 +21,16 @@
       display: flex;
       flex-direction: row;
       justify-content: space-between;
+      gap: 1rem;
+
+      div {
+        flex: 1 1 0;
+      }
+
+      @media screen and (max-width: 540px) {
+        flex-direction: column;
+        gap: 2rem;
+      }
 
       .p-float-label {
         width: 100%;
